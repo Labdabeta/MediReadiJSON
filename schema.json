@@ -1,0 +1,339 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+
+    "definitions": {
+        "name": {
+            "description": "The name of a human being.",
+            "type": "object",
+            "properties": {
+                "given": {
+                    "description": "First or given name(s).",
+                    "type": "string"
+                },
+                "family": {
+                    "description": "Family name(s).",
+                    "type": "string"
+                },
+                "additional": {
+                    "description": "Middle name(s).",
+                    "type": "array",
+                    "items": { "type": "string" }
+                },
+                "prefix": {
+                    "description": "Honorific prefixes.",
+                    "type": "array",
+                    "items": { "type": "string" }
+                },
+                "suffix": {
+                    "description": "Honorific suffixes.",
+                    "type": "array",
+                    "items": { "type": "string" }
+                },
+                "nickname": {
+                    "description": "Prefered nickname.",
+                    "type": "string"
+                },
+                "formatted": {
+                    "description": "Formatted name.",
+                    "type": "string"
+                }
+            },
+            "required": ["given", "family"]
+        },
+        "address": {
+            "description": "An Address following the convention of http://microformats.org/wiki/hcard",
+            "type": "object",
+            "properties": {
+                "post-office-box": { "type": "string" },
+                "extended-address": { "type": "string" },
+                "street-address": { "type": "string" },
+                "locality":{ "type": "string" },
+                "region": { "type": "string" },
+                "postal-code": { "type": "string" },
+                "country-name": { "type": "string"}
+            },
+            "required": ["locality", "region", "country-name"],
+            "dependencies": {
+                "post-office-box": ["street-address"],
+                "extended-address": ["street-address"]
+            }
+        }
+    },
+
+    "title": "MediReadi",
+    "description": "MediReadi data schema.",
+    "type": "object",
+    "properties" : {
+        "user": {
+            "description": "A single user in the application.",
+            "type": "object",
+            "properties": {
+                "family_history": {
+                    "description": "History of the user's relations.",
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "person": { "type": "name" },
+                            "issue": { "type": "string" }
+                        },
+                        "required": ["issue"]
+                    }
+                },
+                "basic_info": {
+                    "description": "Basic non-medical patient information.",
+                    "type": "object",
+                    "properties": {
+                        "name": { "type": "name" },
+                        "address": { "type": "address" },
+                        "phones": { 
+                            "type": "array", 
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "use": {
+                                        "description": "What the phone is used for. Commonly home, business, or mobile.",
+                                        "type": "string"
+                                    },
+                                    "number": {
+                                        "type": "string",
+                                        "format": "phone"
+                                    }
+                                }
+                            }
+                        },
+                        "email": { "type": "string", "format": "email" },
+                        "sex": { "type": "string" },
+                        "dob": { "description": "Date of birth.", "type": "string", "format": "date-time" },
+                        "insurance": { "type": "string" },
+                        "drug_plan": { "type": "array", "items": { "type": "string" } },
+                        "primary_physician": { "type": "name" },
+                        "next_of_kin": { "type": "name" },
+                        "medical_power_of_attorney": { "type": "name" },
+                        "financial_power_of_attorney": { "type": "name" },
+                        "advanced_directives": { 
+                            "description": "EG: DNR (Do not resuscitate)",
+                            "type": "array",
+                            "items": { "type": "string" }
+                        },
+                        "comments": { "type": "string" }
+                    },
+                    "required": ["name"]
+                },
+                "history_of_past_health": {
+                    "description": "History of major medical issues.",
+                    "type": "array",
+                    "items": { "type": "string" }
+                },
+                "problems": {
+                    "description": "Current medical problems.",
+                    "type": "array",
+                    "items": { "type": "string" }
+                },
+                "prescriptions": {
+                    "description": "List of medications.",
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "start": {
+                                "description": "Start date of medication.",
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            "end": {
+                                "description": "End date of medication.",
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            "dosage_freetext": {
+                                "description": "Quantity and/or frequency. Antirequisite with dosage_formatted. EG: 240 mg QID",
+                                "type": "string"
+                            },
+                            "dosage_formatted": {
+                                "description": "Quantity and/or frequency. Antirequisite with dosage_freetext.",
+                                "type": "object",
+                                "properties": {
+                                    "frequency": {
+                                        "description": "Usually as a drop-down menu. EG: Q4H, BID, QID. NOTE: should be DISPLAYED as EG: 'every 4 hours', 'twice a day', 'four times a day'",
+                                        "type": "string"
+                                    },
+                                    "quantity": {
+                                        "type": "object",
+                                        "properties": {
+                                            "unit": { "type": "string" },
+                                            "amount": { "type": "number" },
+                                            "desc": { "type": "string" },
+                                            "count": { "type": "integer" }
+                                        },
+                                        "required": ["unit", "amount"]
+                                    },
+                                    "method": { "type": "string" }
+                                }
+                            },
+                            "name": {
+                                "description": "The names of the drug.",
+                                "type": "object",
+                                "properties": {
+                                    "brand_name": {
+                                        "type": "array",
+                                        "items": { "type": "string" }
+                                    },
+                                    "generic_name": {
+                                        "type": "array",
+                                        "items": { "type": "string" }
+                                    }
+                                }
+                            },
+                            "class": {
+                                "description": "The drug class of the prescription.",
+                                "type": "array",
+                                "items": { "type": "string" }
+                            },
+                            "notes": {
+                                "description": "Any additional information about the prescription.",
+                                "type": "array",
+                                "items": { "type": "string" }
+                            },
+                            "din": {
+                                "description": "Drug identification number (from minister of health). Integer in Canada, mixed-string in some countries.",
+                                "type": "string"
+                            }
+                        },
+                        "required": ["start","name"]
+                    }
+                },
+                "allergies": {
+                    "description": "All things the patient may be allergic to.",
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "form": {
+                                "description": "EG: Food/Insect/Environmental",
+                                "type": "string"
+                            },
+                            "cause": {
+                                "description": "The cause of the allergy.",
+                                "type": "string"
+                            },
+                            "reaction": {
+                                "description": "The effect of the allergy.",
+                                "type": "object",
+                                "properties": {
+                                    "type": { 
+                                        "description": "Allergy/Side Effect/Exaggerated Effect/Other",
+                                        "type": "string" 
+                                    },
+                                    "severity": {
+                                        "description": "Life Threatening/Major/Minor/No Reaction",
+                                        "type": "string"
+                                    },
+                                    "brief": {
+                                        "description": "Brief description of reaction.",
+                                        "type": "string"
+                                    },
+                                    "details": {
+                                        "description": "Detailed description of reaction.",
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "status": {
+                                "description": "Whether the allergy is confirmed or suspected.",
+                                "type": "boolean"
+                            }
+                        },
+                        "required": ["cause"]
+                    }
+                },
+                "immunization": {
+                    "description": "All treatments the patient has received.",
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": { 
+                                "description": "EG: Flu shot/Tetanus vaccine",
+                                "type": "string"
+                            },
+                            "date": { "type": "string", "format": "date-time" }
+                        },
+                        "required": ["name"]
+                    }
+                },
+                "personal": {
+                    "description": "Personal information.",
+                    "type": "array",
+                    "items": { "type": "string" }
+                },
+                "reminders": {
+                    "description": "Reminders. (NOTE: Last dates of various tests is a type of physician only reminder. Not required for design scope.)",
+                    "type": "array",
+                    "items": { "type": "string" }
+                },
+                "risks": {
+                    "description": "Heightened risk factor.",
+                    "type": "array",
+                    "items": { "type": "string" }
+                },
+                "labs": {
+                    "description": "List of laboratory results.",
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "measured_value": {
+                                "description": "EG: Creatinine/Weight/Iron",
+                                "type": "string"
+                            },
+                            "value": {
+                                "description": "The value measured by the lab.",
+                                "type": "object",
+                                "properties": {
+                                    "amount": { "type": "number" },
+                                    "note": { "type": "string", "description": "Note, some labs return only a note. EG: 'No evidence found'" }
+                                }
+                            },
+                            "unit": { 
+                                "description": "If inconsistent units, ask whether to graph all values, or only SI values.",
+                                "type": "string" 
+                            },
+                            "upper_normal": {
+                                "description": "Upper limit of normal range.",
+                                "amount": { "type": "number" }
+                            },
+                            "lower_normal": {
+                                "description": "Upper limit of normal range.",
+                                "amount": { "type": "number" }
+                            },
+                            "date": {
+                                "type": "string",
+                                "format": "date-time"
+                            }
+                        },
+                        "required": ["value","date","measured_value"]
+                    }
+                },
+                "doctors": {
+                    "description": "List of doctors seen by patient.",
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "type": {
+                                "description": "Type of doctor.",
+                                "type": "string"
+                            },
+                            "name": { "type": "name" },
+                            "location": { "type": "address" }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
