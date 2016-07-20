@@ -1,65 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
 
-    "definitions": {
-        "name": {
-            "description": "The name of a human being.",
-            "type": "object",
-            "properties": {
-                "given": {
-                    "description": "First or given name(s).",
-                    "type": "string"
-                },
-                "family": {
-                    "description": "Family name(s).",
-                    "type": "string"
-                },
-                "additional": {
-                    "description": "Middle name(s).",
-                    "type": "array",
-                    "items": { "type": "string" }
-                },
-                "prefix": {
-                    "description": "Honorific prefixes.",
-                    "type": "array",
-                    "items": { "type": "string" }
-                },
-                "suffix": {
-                    "description": "Honorific suffixes.",
-                    "type": "array",
-                    "items": { "type": "string" }
-                },
-                "nickname": {
-                    "description": "Prefered nickname.",
-                    "type": "string"
-                },
-                "formatted": {
-                    "description": "Formatted name.",
-                    "type": "string"
-                }
-            },
-            "required": ["given", "family"]
-        },
-        "address": {
-            "description": "An Address following the convention of http://microformats.org/wiki/hcard",
-            "type": "object",
-            "properties": {
-                "post-office-box": { "type": "string" },
-                "extended-address": { "type": "string" },
-                "street-address": { "type": "string" },
-                "locality":{ "type": "string" },
-                "region": { "type": "string" },
-                "postal-code": { "type": "string" },
-                "country-name": { "type": "string"}
-            },
-            "required": ["locality", "region", "country-name"],
-            "dependencies": {
-                "post-office-box": ["street-address"],
-                "extended-address": ["street-address"]
-            }
-        }
-    },
-
     "title": "MediReadi",
     "description": "MediReadi data schema.",
     "type": "object",
@@ -74,7 +15,7 @@
                     "items": {
                         "type": "object",
                         "properties": {
-                            "person": { "type": "name" },
+                            "person": { "type": "string" },
                             "issue": { "type": "string" }
                         },
                         "required": ["issue"]
@@ -84,8 +25,8 @@
                     "description": "Basic non-medical patient information.",
                     "type": "object",
                     "properties": {
-                        "name": { "type": "name" },
-                        "address": { "type": "address" },
+                        "name": { "type": "string" },
+                        "address": { "type": "string" },
                         "phones": { 
                             "type": "array", 
                             "items": {
@@ -107,10 +48,10 @@
                         "dob": { "description": "Date of birth.", "type": "string", "format": "date-time" },
                         "insurance": { "type": "string" },
                         "drug_plan": { "type": "array", "items": { "type": "string" } },
-                        "primary_physician": { "type": "name" },
-                        "next_of_kin": { "type": "name" },
-                        "medical_power_of_attorney": { "type": "name" },
-                        "financial_power_of_attorney": { "type": "name" },
+                        "primary_physician": { "type": "string" },
+                        "next_of_kin": { "type": "string" },
+                        "medical_power_of_attorney": { "type": "string" },
+                        "financial_power_of_attorney": { "type": "string" },
                         "advanced_directives": { 
                             "description": "EG: DNR (Do not resuscitate)",
                             "type": "array",
@@ -118,7 +59,7 @@
                         },
                         "comments": { "type": "string" }
                     },
-                    "required": ["name"]
+                    "required": ["string"]
                 },
                 "history_of_past_health": {
                     "description": "History of major medical issues.",
@@ -325,8 +266,8 @@
                                 "description": "Type of doctor.",
                                 "type": "string"
                             },
-                            "name": { "type": "name" },
-                            "location": { "type": "address" }
+                            "name": { "type": "string" },
+                            "location": { "type": "string" }
                         }
                     }
                 }
